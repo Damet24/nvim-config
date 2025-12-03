@@ -1,6 +1,6 @@
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
-vim.g.mapleader = "<Space>"
+vim.g.mapleader = " "
 vim.cmd("syntax off")
 vim.opt.clipboard = "unnamedplus"
 vim.opt.tabstop = 4
@@ -192,9 +192,78 @@ require("pckr").add({
 		end,
 	},
 	{
-		"Mofiqul/vscode.nvim",
+		"ayu-theme/ayu-vim",
 		config = function()
-			vim.cmd.colorscheme("vscode")
+			vim.cmd("colorscheme ayu")
+		end,
+	},
+	{
+		"mfussenegger/nvim-lint",
+		config = function()
+			local lint = require("lint")
+			local linters = {}
+			local events = { "BufWritePost", "BufReadPost", "InsertLeave" }
+			for name, linter in pairs(linters) do
+				if type(linter) == "table" and type(lint.linters[name]) == "table" then
+					lint.linters[name] = vim.tbl_deep_extend("force", lint.linters[name], linter)
+					if type(linter.prepend_args) == "table" then
+						lint.linters[name].args = lint.linters[name].args or {}
+						vim.list_extend(lint.linters[name].args, linter.prepend_args)
+					end
+				else
+					lint.linters[name] = linter
+				end
+			end
+			require("lint").linters_by_ft = {
+				python = { "mypy" },
+				lua = { "selene" },
+			}
+
+			vim.api.nvim_create_autocmd(events, {
+				callback = function()
+					-- try_lint without arguments runs the linters defined in `linters_by_ft`
+					-- for the current filetype
+					require("lint").try_lint()
+				end,
+			})
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("noice").setup({
+				lsp = {
+					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+					},
+				},
+				-- you can enable a preset for easier configuration
+				presets = {
+					bottom_search = true, -- use a classic bottom cmdline for search
+					command_palette = true, -- position the cmdline and popupmenu together
+					long_message_to_split = true, -- long messages will be sent to a split
+					inc_rename = false, -- enables an input dialog for inc-rename.nvim
+					lsp_doc_border = false, -- add a border to hover docs and signature help
+				},
+			})
+		end,
+		requires = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
+		},
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+		config = function()
+			require("gitsigns").setup({})
 		end,
 	},
 })
@@ -234,3 +303,11 @@ vim.diagnostic.config({
 })
 
 vim.keymap.set("n", "<C-b>", "<cmd>NvimTreeToggle<CR>", {})
+
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
+vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+
+vim.keymap.set("n", "<S-D>", vim.diagnostic.open_float, { desc = "Show diagnostics on float" })
