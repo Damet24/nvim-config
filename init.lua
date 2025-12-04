@@ -193,10 +193,9 @@ require("pckr").add({
 		end,
 	},
 	{
-		"ayu-theme/ayu-vim",
-		config = function()
-			vim.cmd("colorscheme ayu")
-		end,
+		"tribela/transparent.nvim",
+		event = "VimEnter",
+		config = true,
 	},
 	{
 		"mfussenegger/nvim-lint",
@@ -240,15 +239,15 @@ require("pckr").add({
 						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 						["vim.lsp.util.stylize_markdown"] = true,
 						["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+						["vim.lsp.buf.code_action"] = true, -- requires hrsh7th/nvim-cmp
 					},
 				},
-				-- you can enable a preset for easier configuration
 				presets = {
-					bottom_search = true, -- use a classic bottom cmdline for search
-					command_palette = true, -- position the cmdline and popupmenu together
-					long_message_to_split = true, -- long messages will be sent to a split
-					inc_rename = false, -- enables an input dialog for inc-rename.nvim
-					lsp_doc_border = false, -- add a border to hover docs and signature help
+					bottom_search = false,
+					command_palette = false,
+					long_message_to_split = true,
+					inc_rename = true,
+					lsp_doc_border = true,
 				},
 			})
 		end,
@@ -256,8 +255,8 @@ require("pckr").add({
 			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
 			"MunifTanjim/nui.nvim",
 			-- OPTIONAL:
-			--   `nvim-notify` is only needed, if you want to use the notification view.
-			--   If not available, we use `mini` as the fallback
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
 			"rcarriga/nvim-notify",
 		},
 	},
@@ -265,6 +264,12 @@ require("pckr").add({
 		"lewis6991/gitsigns.nvim",
 		config = function()
 			require("gitsigns").setup({})
+		end,
+	},
+	{
+		"stevearc/oil.nvim",
+		config = function()
+			require("oil").setup()
 		end,
 	},
 })
@@ -312,3 +317,12 @@ vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" 
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 
 vim.keymap.set("n", "<S-D>", vim.diagnostic.open_float, { desc = "Show diagnostics on float" })
+
+vim.keymap.set("n", "<C-H>", "<C-W>h", { desc = "Mover al split izquierdo" })
+vim.keymap.set("n", "<C-J>", "<C-W>j", { desc = "Mover al split de abajo" })
+vim.keymap.set("n", "<C-K>", "<C-W>k", { desc = "Mover al split de arriba" })
+vim.keymap.set("n", "<C-L>", "<C-W>l", { desc = "Mover al split derecho" })
+
+vim.keymap.set("n", "<leader>q", ":q<CR>")
+vim.keymap.set("n", "<leader>w", ":w<CR>")
+vim.keymap.set("n", "<leader>x", ":x<CR>")
