@@ -193,11 +193,6 @@ require("pckr").add({
 		end,
 	},
 	{
-		"tribela/transparent.nvim",
-		event = "VimEnter",
-		config = true,
-	},
-	{
 		"mfussenegger/nvim-lint",
 		config = function()
 			local lint = require("lint")
@@ -272,6 +267,16 @@ require("pckr").add({
 			require("oil").setup()
 		end,
 	},
+
+	{
+		"rebelot/kanagawa.nvim",
+	},
+	{
+		"vague-theme/vague.nvim",
+		config = function()
+			vim.cmd("colorscheme vague")
+		end,
+	},
 })
 
 local keymap = vim.keymap -- for conciseness
@@ -316,7 +321,7 @@ vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live gr
 vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 
-vim.keymap.set("n", "<S-D>", vim.diagnostic.open_float, { desc = "Show diagnostics on float" })
+-- vim.keymap.set("n", "<S-D>", vim.diagnostic.open_float, { desc = "Show diagnostics on float" })
 
 vim.keymap.set("n", "<C-H>", "<C-W>h", { desc = "Mover al split izquierdo" })
 vim.keymap.set("n", "<C-J>", "<C-W>j", { desc = "Mover al split de abajo" })
